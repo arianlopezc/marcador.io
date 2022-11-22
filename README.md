@@ -497,7 +497,7 @@ GET /v1/merchant/export/items/status?id=ec45ddfd-0047-4b1f-aca2-2a4767559930
 This endpoint will return you the content of the generated CSV file holding all the items and their data, found at the moment of the export was processed.
 
 ```
-/v1/merchant/export/items/content?id=ec45ddfd-0047-4b1f-aca2-2a4767559930
+GET /v1/merchant/export/items/content?id=ec45ddfd-0047-4b1f-aca2-2a4767559930
 ```
 `id` - a  unique identifier that was provided in the response of the export initialization endpoint. You will use it for everything related to the export, from checking the status, to downloading the results.
 
