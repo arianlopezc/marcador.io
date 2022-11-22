@@ -34,13 +34,19 @@ If you decide to submit a CSV file holding events to be processed, keep in mind,
 
 ## Features
 
-### [Get Item](#heading)
-### [Post Item Transaction](#post-item)
-### [Items Transactions Referenced](#items-transactions-referenced)
-### [Get Item Events](#get-item-events)
-### [Delete Item](#delete-item)
-### [Export Items](#export-items)
-### [Import Items Events](#import-items-events)
+[Get Item](#heading)
+
+[Post Item Transaction](#post-item)
+
+[Items Transactions Referenced](#items-transactions-referenced)
+
+[Get Item Events](#get-item-events)
+
+[Delete Item](#delete-item)
+
+[Export Items](#export-items)
+
+[Import Items Events](#import-items-events)
 
 <br/>
 <hr/>
