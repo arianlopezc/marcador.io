@@ -36,9 +36,9 @@ If you decide to submit a CSV file holding events to be processed, keep in mind,
 
 [Get Item](#heading)
 
-[Post Item Transaction](#post-item)
+[Post Item Event](#post-item)
 
-[Items Transactions Referenced](#items-transactions-referenced)
+[Items Events Referenced](#items-eevents-referenced)
 
 [Get Item Events](#get-item-events)
 
@@ -111,7 +111,7 @@ Http 200
 
 <a name="post-item">
 
-   ## Post Item Transaction
+   ## Post Item Event
 </a>
 
 Submits an event to be applied to the item's total. If the item does not exist, it creates it.
@@ -120,7 +120,7 @@ Submits an event to be applied to the item's total. If the item does not exist, 
 `Request`
 
 ```
-POST /v1/merchant/item/transactions/post
+POST /v1/merchant/item/events/post
 
 BODY - Option 1
 {
@@ -182,9 +182,9 @@ This code will be returned when the event was submitted succesfully.
 
 <br/>
 
-<a name="items-transactions-referenced">
+<a name="items-events-referenced">
 
-  ## Items Transactions Referenced
+  ## Items Events Referenced
 </a>
 
 Paginated endpoint that provides the recorded and applied events associated to a given reference id.
@@ -195,7 +195,7 @@ The paginated events will be returned order by date in which they were applied, 
 `Request`
 
 ```
-GET /v1/merchant/item/transactions/referenced?referenceId=5594e9d51063&start=0&limit=20
+GET /v1/merchant/item/events/referenced?referenceId=5594e9d51063&start=0&limit=20
 ```
 
 `referenceId` - the value used to reference one or more submitted events.
@@ -243,10 +243,10 @@ Http 200
         }
     ],
     "_links": {
-        "next": "/v1/merchant/item/transactions/referenced?start=4&limit=2&referenceId=5594e9d51063",
-        "last": "/v1/merchant/item/transactions/referenced?start=4&limit=2&referenceId=5594e9d51063",
-        "prev": "/v1/merchant/item/transactions/referenced?start=0&limit=2&referenceId=5594e9d51063",
-        "first": "/v1/merchant/item/transactions/referenced?start=0&limit=2&referenceId=5594e9d51063"
+        "next": "/v1/merchant/item/events/referenced?start=4&limit=2&referenceId=5594e9d51063",
+        "last": "/v1/merchant/item/events/referenced?start=4&limit=2&referenceId=5594e9d51063",
+        "prev": "/v1/merchant/item/events/referenced?start=0&limit=2&referenceId=5594e9d51063",
+        "first": "/v1/merchant/item/events/referenced?start=0&limit=2&referenceId=5594e9d51063"
     }
 }
 ```
@@ -579,7 +579,7 @@ Each header must be present or the validation process will fail. Each value must
 `Initialize Import - Request`
 
 ```
-POST /v1/merchant/import/items/transactions/init
+POST /v1/merchant/import/items/events/init
 ```
 This will trigger the import process which are performed one at a time.
 
@@ -607,7 +607,7 @@ The import will be considered as expired after that and you will be able to star
 `Upload Import File - Request`
 
 ```
-POST /v1/merchant/import/items/transactions/upload-file?id=1c568229-cba6-4047-b6d1-76cab42f3aeb
+POST /v1/merchant/import/items/events/upload-file?id=1c568229-cba6-4047-b6d1-76cab42f3aeb
 
 Content-Type = multipart/form-data
 
@@ -628,7 +628,7 @@ Http 204
 `Check Import Status - Request`
 
 ```
-GET /v1/merchant/import/items/transactions/status?id=1c568229-cba6-4047-b6d1-76cab42f3aeb
+GET /v1/merchant/import/items/events/status?id=1c568229-cba6-4047-b6d1-76cab42f3aeb
 ```
 
 `id` - a  unique identifier that was provided in the response of the import initialization endpoint. You will use it for everything related to the import, from checking the status, to downloading the results.
@@ -661,7 +661,7 @@ Http 200
 If the status on the import process was COMPLETED_WITH_ERRORS then you can download a CSV file that specifies the row number of the import file you uploaded, and has the specified error on the events that failed.
 
 ```
-GET /v1/merchant/import/items/transactions/results?id=64283212-c791-43da-a9ed-8ea26fd87510
+GET /v1/merchant/import/items/events/results?id=64283212-c791-43da-a9ed-8ea26fd87510
 ```
 
 `id` - the id sent as part of the request.
