@@ -32,9 +32,24 @@ If you decide to submit a CSV file holding events to be processed, keep in mind,
 <br/>
 <br/>
 
-## Endpoints
+## Features
 
-## Get Item
+### [Get Item](#heading)
+### [Post Item Transaction](#post-item)
+### [Items Transactions Referenced](#items-transactions-referenced)
+### [Get Item Events](#get-item-events)
+### [Delete Item](#delete-item)
+### [Export Items](#export-items)
+### [Import Items Events](#import-items-events)
+
+<br/>
+<hr/>
+<br/>
+
+<a name="heading">
+
+   ## Get Item
+</a>
 
 Returns the data for the associated identifier.
 <br/>
@@ -88,7 +103,10 @@ Http 200
 
 <br/>
 
-## Post Item Transaction
+<a name="post-item">
+
+   ## Post Item Transaction
+</a>
 
 Submits an event to be applied to the item's total. If the item does not exist, it creates it.
 <br/>
@@ -158,7 +176,10 @@ This code will be returned when the event was submitted succesfully.
 
 <br/>
 
-## Items Transactions Referenced
+<a name="items-transactions-referenced">
+
+  ## Items Transactions Referenced
+</a>
 
 Paginated endpoint that provides the recorded and applied events associated to a given reference id.
 
@@ -253,7 +274,10 @@ Http 200
 
 <br/>
 
-## Get Item Events
+<a name="get-item-events">
+
+  ## Get Item Events
+</a>
 
 Paginated endpoint that provides the recorded and applied events associated with the specified item.
 
@@ -352,7 +376,10 @@ Http 200
 
 <br/>
 
-## Delete Item
+<a name="delete-item">
+
+  ## Delete Item
+</a>
 
 It will submit a request for the API to delete the current data on the desired item.
 
@@ -390,7 +417,10 @@ Http 204
 
 <br/>
 
-## Export Items
+<a name="export-items">
+
+  ## Export Items
+</a>
 
 You can have all your items exported into a CSV file and download it if you need to have access to all the data you are holding in the items.
 
@@ -482,7 +512,10 @@ The CSV file generated will hold the following columns:
 
 <br/>
 
-## Import Items Events
+<a name="import-items-events">
+
+  ## Import Items Events
+</a>
 
 You can import a CSV file holding data for items you wish to upload to the API. The benefit of this feature, is that you don't have submit one request for each event you want to represent in the API, but a bunch of them at the same time using this import.
 
