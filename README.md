@@ -34,7 +34,7 @@ If you decide to submit a CSV file holding events to be processed, keep in mind,
 
 ## Features
 
-[Get Item](#heading)
+[Get Item](#get-item)
 
 [Post Item Event](#post-item)
 
@@ -52,7 +52,7 @@ If you decide to submit a CSV file holding events to be processed, keep in mind,
 <hr/>
 <br/>
 
-<a name="heading">
+<a name="get-item">
 
    ## Get Item
 </a>
