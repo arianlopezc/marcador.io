@@ -38,7 +38,7 @@ If you decide to submit a CSV file holding events to be processed, keep in mind,
 
 [Post Item Event](#post-item)
 
-[Items Events Referenced](#items-eevents-referenced)
+[Events on Items Referenced](#events-referenced-items)
 
 [Get Item Events](#get-item-events)
 
@@ -182,9 +182,9 @@ This code will be returned when the event was submitted succesfully.
 
 <br/>
 
-<a name="items-events-referenced">
+<a name="events-referenced-items">
 
-  ## Items Events Referenced
+  ## Events on Items Referenced
 </a>
 
 Paginated endpoint that provides the recorded and applied events associated to a given reference id.
