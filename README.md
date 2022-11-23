@@ -48,6 +48,8 @@ If you decide to submit a CSV file holding events to be processed, keep in mind,
 
 [Import Items Events](#import-items-events)
 
+[Get Client](#get-client)
+
 <br/>
 <hr/>
 <br/>
@@ -71,7 +73,7 @@ BODY
 }
 ```
 
-`itemID` - key represents the identifier that you which to fetch for.
+`itemId` - key represents the identifier that you which to fetch for.
 
 - value's length cannot be linger than 70 characters.
 - value cannot have any of the following characters [`!$%&\*()/\\\=[]{};'"|,.<>?]
@@ -678,6 +680,94 @@ row_number,errors
 `row_number` - holds the row that failed to be processed.
 
 `errors` - the errors that were identified for the event specified on that row.
+
+<br/>
+
+<a name="get-client">
+
+   ## Get Client
+</a>
+
+Returns the data for the associated identifier(s). You can send one of the identifiers that you see on the request's body sample or combinations of them. In the case of card information, you need to make sure that you send: last4, issuer, and expirationDate, together.
+<br/>
+<br/>
+`Request`
+
+```
+POST /v1/merchant/client
+
+BODY
+{
+    "clientId": "0ed27a6e-25c9-4c87-82be-37ca71586579", (Optional)
+    "clientEmail": "test@test.com", (Optional)
+    "clientPhoneNumber": "+12015550378", (Optional)
+    "last4": "1234", (Optional)
+    "issuer": "Visa", (Optional)
+    "expirationDate": "12/2030" (Optional)
+}
+```
+
+`clientId` - key represents the identifier that you which to fetch for.
+
+- value's length cannot be linger than 70 characters.
+- value cannot have any of the following characters [`!$%&\*()/\\\=[]{};'"|,.<>?]
+
+`clientEmail` - represents the email associated to the client you which to query for.
+
+`clientPhoneNumber` - phone number you might have associated with the client data.
+
+`last4` - last four digits of a credit card that might be associated with the client's data.
+
+`issuer` - issuer organization that emited the credit card that might be associated with the client's data.
+- value's length cannot be linger than 70 characters.
+- value cannot have any of the following characters [`!$%&\*()/\\\=[]{};'"|,.<>?]
+
+`expirationDate` - expiration date of the credit card that might be associated with the client's data.
+- must match one of the following patterns: MM/YY, MM/YYYY, MMYY, or MMYYYY
+
+Remember that if you wish to use the data for the credit card as the way to identify the client, will have to send the `last4`, `issuer`, and `expirationDate` values combined.
+
+<br/>
+
+`Response`
+
+```
+Http 200
+
+{
+    "clientPhoneNumber": "+12015550378",
+    "clientEmail": "test@test.com",
+    "clientId": "0ed27a6e-25c9-4c87-82be-37ca71586579",
+    "paymentMethods": [
+        {
+            "last4": "1234",
+            "issuer": "Visa",
+            "expirationDate": "12/2030"
+        }
+    ],
+    "total": 100,
+    "createdOn": "2022-11-23T20:02:24.755Z",
+    "lastUpdatedOn": "2022-11-23T20:02:24.755Z"
+}
+```
+
+<br/>
+
+`clientId` - unique key that is associated with the data.
+
+`total` - the numeric value of the item.
+
+`clientEmail` - represents the email associated to the client you which to query for.
+
+`clientPhoneNumber` - phone number you might have associated with the client data.
+
+`paymentMethods` - an array of payment methods that you have associated the client with. You can use one of the payment methods to find the client data.
+
+`createdOn` - date time when the client was created, expressed in ISO 8601 format.
+
+`lastUpdatedOn` - date time when the client was last modified, expressed in ISO 8601 format.
+
+<br/>
 
 <br/>
 <br/>
