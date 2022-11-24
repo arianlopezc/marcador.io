@@ -54,6 +54,8 @@ If you decide to submit a CSV file holding events to be processed, keep in mind,
 
 [Referenced Events on Clients](#events-referenced-clients)
 
+[Get Client Events](#get-client-events)
+
 <br/>
 <hr/>
 <br/>
@@ -846,6 +848,15 @@ BODY - Option 2
 - value's length cannot be linger than 70 characters.
 - value cannot have any of the following characters [`!$%&\*()/\\\=[]{};'"|,.<>?]
 
+`last4` - last four digits of a credit card that might be associated with the client's data.
+
+`issuer` - issuer organization that emited the credit card that might be associated with the client's data.
+- value's length cannot be linger than 70 characters.
+- value cannot have any of the following characters [`!$%&\*()/\\\=[]{};'"|,.<>?]
+
+`expirationDate` - expiration date of the credit card that might be associated with the client's data.
+- must match one of the following patterns: MM/YY, MM/YYYY, MMYY, or MMYYYY
+
 `percentage` - the percentage value to be used for the operation.
 
 - must be a number between 0 and 999999999999, with up to 5 decimal places.
@@ -880,8 +891,11 @@ This code will be returned when the event was submitted succesfully.
 Paginated endpoint that provides the recorded and applied events associated to a given reference id.
 
 The paginated events will be returned order by date in which they were applied, with the most recent listed first and the least recent listed last.
+
+You can send one of the identifiers that you see on the request's body sample or combinations of them. In the case of card information, you need to make sure that you send: last4, issuer, and expirationDate, together.
+
 <br/>
-<br/>
+
 `Request`
 
 ```
@@ -965,10 +979,148 @@ Http 200
 - `operation` - the applied operation specified on the event.
 - `appliedOn` - date time when the event was applied, expressed in ISO 8601 format.
 - `status` - which was the result of processing the event. The only possible values are: SUCCESS | FAILED | FAILED_DUPLICATE
-  - SUCCESS means the event was processed with no issues and the total associated to the item was modified as expected.
+  - SUCCESS means the event was processed with no issues and the total associated to the client was modified as expected.
   - FAILED means the API encountered an error while applying the event and the operation could not be performed.
   - DAILED_DUPLICATE means that the API found more than one client that matched the identifiers passed in the event.
 - `clientId` - the client for which the event was applied.
+- `clientEmail` - represents the email associated to the client.
+- `clientPhoneNumber` - phone number you might have associated with the client data.
+- `total` - value submitted in the event to be applied to the client.
+- `percentage` - percentage submitted in the event to be applied to the client.
+
+`_links` - contains the calculated links to the pages that you could query next based on the start and limit combinations that you sent in the request and the total clients found for the referenceId. The links are optional and will not be calculated if there are no elements to be queried.
+
+- `next` - calculated link for next page.
+- `last` - calculated link for last page.
+- `prev` - calculated link for previous page.
+- `first` - calculated link for first page.
+
+<br/>
+
+<a name="get-client-events">
+
+  ## Get Client Events
+</a>
+
+Paginated endpoint that provides the recorded and applied events associated with the specified item.
+
+The paginated events will be returned order by date in which they were applied, with the most recent listed first and the least recent listed last.
+
+You can send one of the identifiers that you see on the request's body sample or combinations of them. In the case of card information, you need to make sure that you send: last4, issuer, and expirationDate, together.
+<br/>
+<br/>
+
+`Request`
+
+```
+POST /v1/merchant/client/events?start=0&limit=20
+
+{
+    "clientId":"8bc5bfec-c6a6-4b6f-95ec-5594e9d51063",
+    "clientPhoneNumber":"+12015550378",
+    "clientEmail":"test@test.com",
+    "clientId": "0ed27a6e-25c9-4c87-82be-37ca71586579",
+    "last4":"1234",
+    "issuer":"Visa",
+    "expirationDate":"12/2030",
+}
+```
+
+`clientId` - unique key that is associated with the data.
+- value's length cannot be linger than 70 characters.
+- value cannot have any of the following characters [`!$%&\*()/\\\=[]{};'"|,.<>?]
+
+`clientEmail` - represents the email associated to the client you which to query for.
+
+`clientPhoneNumber` - phone number you might have associated with the client data.
+
+`last4` - last four digits of a credit card that might be associated with the client's data.
+
+`issuer` - issuer organization that emited the credit card that might be associated with the client's data.
+- value's length cannot be linger than 70 characters.
+- value cannot have any of the following characters [`!$%&\*()/\\\=[]{};'"|,.<>?]
+
+`expirationDate` - expiration date of the credit card that might be associated with the client's data.
+- must match one of the following patterns: MM/YY, MM/YYYY, MMYY, or MMYYYY
+
+`start` - optional value to specify from which index do you wish to start the page to be queried.
+
+- If not specified, a value of 0 will be used as default.
+
+`limit` - optional value to specify how many items should be queried from the start index value.
+
+- If not specified, a value of 20 will be used as default.
+- Min accepted value is 1 and max accepted value will be 30.
+
+<br/>
+
+`Response`
+
+```
+Http 200
+
+{
+    "limit": 2,
+    "size": 2,
+    "start": 2,
+    "total": 6,
+    "results": [
+        {
+            "referenceId": "37ca71586579",
+            "operation": "subtract_percentage",
+            "appliedOn": "2022-11-24T17:45:29.743Z",
+            "status": "SUCCESS",
+            "clientId": "0ed27a6e-25c9-4c87-82be-37ca71586579",
+            "clientEmail": "test@test.com",
+            "clientPhoneNumber": "+12015550378",
+            "last4": "1234",
+            "issuer": "Visa",
+            "expirationDate": "12/2030",
+            "percentage": 20
+        },
+        {
+            "referenceId": "37ca71586579",
+            "operation": "add",
+            "appliedOn": "2022-11-24T17:45:22.992Z",
+            "status": "SUCCESS",
+            "clientId": "0ed27a6e-25c9-4c87-82be-37ca71586579",
+            "clientEmail": "test@test.com",
+            "clientPhoneNumber": "+12015550378",
+            "last4": "1234",
+            "issuer": "Visa",
+            "expirationDate": "12/2030",
+            "total": 5
+        },
+    ],
+    "_links": {
+        "next": "/v1/merchant/client/events?start=4&limit=2",
+        "last": "/v1/merchant/client/events?start=4&limit=2",
+        "prev": "/v1/merchant/client/events?start=0&limit=2",
+        "first": "/v1/merchant/client/events?start=0&limit=2"
+    }
+}
+```
+
+`limit` - the applied limit to the queried elements.
+
+`size` - how many clients are being returned as part of the page.
+
+`start` - index at which the queried was performed in the events.
+
+`total` - how many processed events are associated to the specified reference id.
+
+`results` - the list of events associated to this page.
+
+- `referenceId` - the value used to reference the event.
+- `operation` - the applied operation specified on the event.
+- `appliedOn` - date time when the event was applied, expressed in ISO 8601 format.
+- `status` - which was the result of processing the event. The only possible values are: SUCCESS | FAILED | FAILED_DUPLICATE
+  - SUCCESS means the event was processed with no issues and the total associated to the client was modified as expected.
+  - FAILED means the API encountered an error while applying the event and the operation could not be performed.
+  - DAILED_DUPLICATE means that the API found more than one client that matched the identifiers passed in the event.
+- `clientId` - the client for which the event was applied.
+- `clientEmail` - represents the email associated to the client.
+- `clientPhoneNumber` - phone number you might have associated with the client data.
 - `total` - value submitted in the event to be applied to the client.
 - `percentage` - percentage submitted in the event to be applied to the client.
 
