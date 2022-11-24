@@ -790,6 +790,8 @@ If you send a payment method with no other identifier, the API will create a new
 
 `If you send an identifier that is used in another client, the event will fail to be applied properly.`
 
+`If you send multiple identifiers, but one of them has a new value, then it will be updated in the client's data, as long as it is not found in any other client.`
+
 <br/>
 
 `Request`
