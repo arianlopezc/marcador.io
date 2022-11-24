@@ -56,6 +56,8 @@ If you decide to submit a CSV file holding events to be processed, keep in mind,
 
 [Get Client Events](#get-client-events)
 
+[Delete Client](#delete-client)
+
 <br/>
 <hr/>
 <br/>
@@ -401,7 +403,7 @@ Keep in mind a couple of things.
 
 This will not delete the events associated to the item. So, if you need to query those in the future, you can still do it.
 
-Also, if you submit a new event for the itemId that you just deleted, the item will be created again, using the new value you submit.
+`Also, if you submit a new event for the itemId that you just deleted, the item will be created again, using the new value you submit.`
 
 <br/>
 <br/>
@@ -1132,6 +1134,65 @@ Http 200
 - `first` - calculated link for first page.
 
 <br/>
+
+<a name="delete-client">
+
+  ## Delete Client
+</a>
+
+It will submit a request for the API to delete the current data on the desired item.
+
+Keep in mind a couple of things.
+
+This will not delete the events associated to the client. So, if you need to query those in the future, you can still do it.
+
+`Also, if you submit a new event for the client that you just deleted, the client will be created again, using the new value you submit.`
+
+You can send one of the identifiers that you see on the request's body sample or combinations of them. In the case of card information, you need to make sure that you send: last4, issuer, and expirationDate, together.
+
+<br/>
+<br/>
+
+`Request`
+
+```
+POST /v1/merchant/client/delete
+
+{
+    "clientId":"8bc5bfec-c6a6-4b6f-95ec-5594e9d51063",
+    "clientPhoneNumber":"+12015550378",
+    "clientEmail":"test@test.com",
+    "clientId": "0ed27a6e-25c9-4c87-82be-37ca71586579",
+    "last4":"1234",
+    "issuer":"Visa",
+    "expirationDate":"12/2030",
+}
+```
+
+`clientId` - unique key that is associated with the data.
+- value's length cannot be linger than 70 characters.
+- value cannot have any of the following characters [`!$%&\*()/\\\=[]{};'"|,.<>?]
+
+`clientEmail` - represents the email associated to the client you which to query for.
+
+`clientPhoneNumber` - phone number you might have associated with the client data.
+
+`last4` - last four digits of a credit card that might be associated with the client's data.
+
+`issuer` - issuer organization that emited the credit card that might be associated with the client's data.
+- value's length cannot be linger than 70 characters.
+- value cannot have any of the following characters [`!$%&\*()/\\\=[]{};'"|,.<>?]
+
+`expirationDate` - expiration date of the credit card that might be associated with the client's data.
+- must match one of the following patterns: MM/YY, MM/YYYY, MMYY, or MMYYYY
+
+<br/>
+
+`Response`
+
+```
+Http 204
+```
 
 <br/>
 <br/>
