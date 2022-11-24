@@ -15,7 +15,7 @@
 
 ## Overview
 
-Marcador.io allows you to assign a numeric value to an identifier that represents an item, to a client or user of your system, by performing one of the following operations: add, subtract, add percentage, subtract percentage, and set value.
+Marcador.io allows you to submit events as requests in order to assign a numeric value to an identifier that represents an item, to a client or user of your system, by performing one of the following operations: add, subtract, add percentage, subtract percentage, and set value.
 <br/>
 <br/>
 These operations can be directly performed by making requests to the appropriate endpoints, or by uploading a CSV file with operations represented as records to the API. All of the records and requests on the endpoints will be processed as events in the order that they are sent to marcador.io.
@@ -57,6 +57,8 @@ If you decide to submit a CSV file holding events to be processed, keep in mind,
 [Get Client Events](#get-client-events)
 
 [Delete Client](#delete-client)
+
+[Export Clients](#export-clients)
 
 <br/>
 <hr/>
@@ -1193,6 +1195,116 @@ POST /v1/merchant/client/delete
 ```
 Http 204
 ```
+
+<br/>
+
+<a name="export-clients">
+
+  ## Export Clients
+</a>
+
+You can have all your clients exported into a CSV file and download it if you need to have access to all the data you are holding in the clients.
+
+For this, it must be done in 3 steps:
+  - Initialize the export.
+  - Check the status of the export process.
+  - Download the generated CSV file holding the clients.
+
+Depending on how many clients you are holding, it might take a bit to process the entire datastore. Remember to check for the status of the process to download the results as soon as they are ready.
+
+<br/>
+
+`Initialize Export - Request`
+
+```
+POST /v1/merchant/export/clients/init
+```
+This will trigger the export process which are performed one at a time.
+
+`Initialize Export - Response`
+
+```
+Http 200
+
+{
+    "id": "ec45ddfd-0047-4b1f-aca2-2a4767559930",
+    "expiresAt": "2022-11-21T00:29:59.665Z"
+}
+```
+
+`id` - a  unique identifier that is given to the export process. You will use it for everything related to this export, from checking the status, to downloading the results.
+
+`expiresAt` - an expiration time expressed in ISO 8601 format, at which the process will be considered as expired because it could not be picked to process by any worker of the API. If this happens, you can submit another request as soon as you wish.
+
+If there is an export that has been triggered already, you will received an `Http 429` as a response.
+
+<br/>
+
+`Check Export Status - Request`
+
+```
+GET /v1/merchant/export/clients/status?id=ec45ddfd-0047-4b1f-aca2-2a4767559930
+```
+
+`id` - a  unique identifier that was provided in the response of the export initialization endpoint. You will use it for everything related to the export, from checking the status, to downloading the results.
+
+`Check Export Status - Response`
+
+```
+{
+    "id": "ec45ddfd-0047-4b1f-aca2-2a4767559930",
+    "status": "COMPLETED"
+}
+```
+`id` - the id sent as part of the request.
+
+`status` - the recorded status for the ongoing export. The possible values are:
+- COMPLETED - the export process finished with no issues at all and the file is available for download.
+- COMPLETED_WITH_ERRORS - the export process finished but the API encountered some issues while processing the events.
+- PENDING - the export was initialized but it still pending from a worker to pick it up.
+- EXPIRED - no worker was able to pick up the export request, so the export process can be considered as expired and you can start a ne one.
+- FAILED - the export failed completely and could not be finished.
+
+<br/>
+
+`Export Clients Content - Request`
+
+This endpoint will return you the content of the generated CSV file holding all the clients and their data, found at the moment of the export was processed.
+
+```
+GET /v1/merchant/export/clients/content?id=ec45ddfd-0047-4b1f-aca2-2a4767559930
+```
+`id` - a  unique identifier that was provided in the response of the export initialization endpoint. You will use it for everything related to the export, from checking the status, to downloading the results.
+
+`Export Clients Content - Response`
+```
+client_id,client_phone_number,client_email,last4,issuer,expiration_date,total,created_on,last_updated_on
+```
+The CSV file generated will hold the following columns:
+
+`client_id` - unique key that is associated with the data.
+
+`total` - the numeric value of the item.
+
+`client_id` - unique key that is associated with the data.
+
+`client_email` - represents the email associated to the client you which to query for.
+
+`client_phone_number` - phone number you might have associated with the client data.
+
+`last4` - last four digits of a credit card that might be associated with the client's data.
+
+`issuer` - issuer organization that emited the credit card that might be associated with the client's data.
+
+`expiration_date` - expiration date of the credit card that might be associated with the client's data.
+
+`total` - the numeric value of the client.
+
+`created_on` - date time when the item was created, expressed in ISO 8601 format.
+
+`last_updated_on` - date time when the item was last modified, expressed in ISO 8601 format.
+
+<br/>
 
 <br/>
 <br/>
