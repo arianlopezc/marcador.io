@@ -52,6 +52,8 @@ If you decide to submit a CSV file holding events to be processed, keep in mind,
 
 [Post Client Event](#post-client)
 
+[Referenced Events on Clients](#events-referenced-clients)
+
 <br/>
 <hr/>
 <br/>
@@ -867,6 +869,117 @@ Http 204
 
 This code will be returned when the event was submitted succesfully.
 ```
+
+<br/>
+
+<a name="events-referenced-clients">
+
+  ## Referenced Events on Clients
+</a>
+
+Paginated endpoint that provides the recorded and applied events associated to a given reference id.
+
+The paginated events will be returned order by date in which they were applied, with the most recent listed first and the least recent listed last.
+<br/>
+<br/>
+`Request`
+
+```
+GET /v1/merchant/client/events/referenced?referenceId=37ca71586579&start=0&limit=20
+```
+
+`referenceId` - the value used to reference one or more submitted events.
+
+- value's length cannot be linger than 70 characters.
+- value cannot have any of the following characters [`!$%&\*()/\\\=[]{};'"|,.<>?]
+
+`start` - optional value to specify from which index do you wish to start the page to be queried.
+
+- If not specified, a value of 0 will be used as default.
+
+`limit` - optional value to specify how many items should be queried from the start index value.
+
+- If not specified, a value of 20 will be used as default.
+- Min accepted value is 1 and max accepted value will be 30.
+
+<br/>
+
+`Response`
+
+```
+Http 200
+
+{
+    "limit": 2,
+    "size": 2,
+    "start": 2,
+    "total": 6,
+    "results": [
+        {
+            "referenceId": "37ca71586579",
+            "operation": "subtract_percentage",
+            "appliedOn": "2022-11-24T17:45:29.743Z",
+            "status": "SUCCESS",
+            "clientId": "0ed27a6e-25c9-4c87-82be-37ca71586579",
+            "clientEmail": "test@test.com",
+            "clientPhoneNumber": "+12015550378",
+            "last4": "1234",
+            "issuer": "Visa",
+            "expirationDate": "12/2030",
+            "percentage": 20
+        },
+        {
+            "referenceId": "37ca71586579",
+            "operation": "add",
+            "appliedOn": "2022-11-24T17:45:22.992Z",
+            "status": "SUCCESS",
+            "clientId": "0ed27a6e-25c9-4c87-82be-37ca71586579",
+            "clientEmail": "test@test.com",
+            "clientPhoneNumber": "+12015550378",
+            "last4": "1234",
+            "issuer": "Visa",
+            "expirationDate": "12/2030",
+            "total": 5
+        }
+    ],
+    "_links": {
+        "next": "/v1/merchant/client/events/referenced?start=4&limit=2&referenceId=37ca71586579",
+        "last": "/v1/merchant/client/events/referenced?start=4&limit=2&referenceId=37ca71586579",
+        "prev": "/v1/merchant/client/events/referenced?start=0&limit=2&referenceId=37ca71586579",
+        "first": "/v1/merchant/client/events/referenced?start=0&limit=2&referenceId=37ca71586579"
+    }
+}
+```
+
+`limit` - the applied limit to the queried elements.
+
+`size` - how many clients are being returned as part of the page.
+
+`start` - index at which the queried was performed in the events.
+
+`total` - how many processed events are associated to the specified reference id.
+
+`results` - the list of events associated to this page.
+
+- `referenceId` - the value used to reference the event.
+- `operation` - the applied operation specified on the event.
+- `appliedOn` - date time when the event was applied, expressed in ISO 8601 format.
+- `status` - which was the result of processing the event. The only possible values are: SUCCESS | FAILED | FAILED_DUPLICATE
+  - SUCCESS means the event was processed with no issues and the total associated to the item was modified as expected.
+  - FAILED means the API encountered an error while applying the event and the operation could not be performed.
+  - DAILED_DUPLICATE means that the API found more than one client that matched the identifiers passed in the event.
+- `clientId` - the client for which the event was applied.
+- `total` - value submitted in the event to be applied to the client.
+- `percentage` - percentage submitted in the event to be applied to the client.
+
+`_links` - contains the calculated links to the pages that you could query next based on the start and limit combinations that you sent in the request and the total clients found for the referenceId. The links are optional and will not be calculated if there are no elements to be queried.
+
+- `next` - calculated link for next page.
+- `last` - calculated link for last page.
+- `prev` - calculated link for previous page.
+- `first` - calculated link for first page.
+
+<br/>
 
 <br/>
 <br/>
