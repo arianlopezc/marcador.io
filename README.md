@@ -50,6 +50,8 @@ If you decide to submit a CSV file holding events to be processed, keep in mind,
 
 [Get Client](#get-client)
 
+[Post Client Event](#post-client)
+
 <br/>
 <hr/>
 <br/>
@@ -768,6 +770,101 @@ Http 200
 `lastUpdatedOn` - date time when the client was last modified, expressed in ISO 8601 format.
 
 <br/>
+
+Post Client Event
+
+<a name="post-client">
+
+   ## Post Client Event
+</a>
+
+Submits an event to be applied to the client's total. If the client does not exist, it creates it.
+
+One important thing.
+
+You can submit a combination of the identifiers available for the client data. If you send the values for a credit card: last4, issuer, and expirationDate, these will be added to the client's list of payment methods as long as you use another identifier for the client.
+
+If you send a payment method with no other identifier, the API will create a new client because it has no way to tie it up to the client you wish. You could also send an event with the same payment method and another identifier event after the client already exist, this way, the client generated with the payment method will be updated with the identifier for other future operations.
+
+`Keep in mind that if you send identifiers for a client and later you add a new one, the client's data will be updated to include the new identifier.`
+
+`If you send an identifier that is used in another client, the event will fail to be applied properly.`
+
+<br/>
+
+`Request`
+
+```
+POST /v1/merchant/client/events/post
+
+BODY - Option 1
+{
+    "operation": "set",
+    "total": 100,
+    "clientPhoneNumber":"+12015550378",
+    "clientEmail":"test@test.com",
+    "clientId": "0ed27a6e-25c9-4c87-82be-37ca71586579",
+    "last4":"1234",
+    "issuer":"Visa",
+    "expirationDate":"12/2030",
+    "referenceId": "37ca71586579"
+}
+
+BODY - Option 2
+{
+    "operation": "add_percentage",
+    "percentage": 100,
+    "clientPhoneNumber":"+12015550378",
+    "clientEmail":"test@test.com",
+    "clientId": "0ed27a6e-25c9-4c87-82be-37ca71586579",
+    "last4":"1234",
+    "issuer":"Visa",
+    "expirationDate":"12/2030",
+    "referenceId": "37ca71586579"
+}
+```
+
+`operation` - which action you wish to perform over the client's total
+- set - it sets the specified value as the client's total.
+- add - it adds the specified amount to the client.
+- subtract - it reduces the specified amount from the client.
+- add_percentage - it increases the client's total by the specified percentage.
+- subtract_percentage - it reduces the client's total by the specified percentage.
+
+`total` - the numeric value to be used for the operation.
+- must be a number between 0 and 999999999999, with up to 5 decimal places.
+
+`clientEmail` - represents the email associated to the client you which to query for.
+
+`clientPhoneNumber` - phone number you might have associated with the client data.
+
+`clientId` - unique key that is associated with the data.
+- value's length cannot be linger than 70 characters.
+- value cannot have any of the following characters [`!$%&\*()/\\\=[]{};'"|,.<>?]
+
+`percentage` - the percentage value to be used for the operation.
+
+- must be a number between 0 and 999999999999, with up to 5 decimal places.
+
+`referenceId` - this can be used to associate the event you are submitting to the API with anything you wish. The value doesn't need to be a unique key and can be used with other events to link them together.
+
+- value's length cannot be linger than 70 characters.
+- value cannot have any of the following characters [`!$%&\*()/\\\=[]{};'"|,.<>?]
+
+`comment` - any comment you deem relevant.
+
+- value's length cannot be linger than 70 characters.
+- value cannot have any of the following characters [`!$%&\*()/\\\=[]{};'"|,.<>?]
+
+<br/>
+
+`Response`
+
+```
+Http 204
+
+This code will be returned when the event was submitted succesfully.
+```
 
 <br/>
 <br/>
