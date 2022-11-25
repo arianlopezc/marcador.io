@@ -6,10 +6,16 @@
 <p align="center">A high-availability HTTP API to keep track of a score, rate, grade, or any other numeric value, associated with an item, user, or client.</p>
 <br/>
 <p align="center">To use this HTTP API you will need to go through RapidAPI.</p>
+
+<p align="center">
+<a href="https://rapidapi.com/arian.lopezc/api/marcador-io">https://rapidapi.com/arian.lopezc/api/marcador-io<a/>
+</p>
+
 <br/>
+
 <div style="text-align: center">
-<img src="https://img.shields.io/badge/marcador.io-v1.1-blue" alt="NPM Version" />
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/github/issues-raw/arianlopezc/marcador.io" alt="Package License" /></a>
+  <img src="https://img.shields.io/badge/marcador.io-v1.1-blue" alt="NPM Version" />
+  <a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/github/issues-raw/arianlopezc/marcador.io" alt="Package License" /></a>
 </div>
 <br/>
 
@@ -537,7 +543,7 @@ The CSV file generated will hold the following columns:
   ## Import Items Events
 </a>
 
-You can import a CSV file holding data for items you wish to upload to the API. The benefit of this feature, is that you don't have submit one request for each event you want to represent in the API, but a bunch of them at the same time using this import.
+You can import a <a href="https://github.com/arianlopezc/marcador.io/blob/main/import_items.csv">CSV file</a> holding data for items you wish to upload to the API. The benefit of this feature, is that you don't have submit one request for each event you want to represent in the API, but a bunch of them at the same time using this import.
 
 In order to upload an import of events, you go through 4 steps:
   - Initialize the import.
@@ -546,6 +552,8 @@ In order to upload an import of events, you go through 4 steps:
   - Download the results file, if one was generated.
 
 Each file to be uploaded, cannot be bigger than 100 Megabytes and it must comply with a very specific format.
+
+<a href="https://github.com/arianlopezc/marcador.io/blob/main/import_items.csv">Download a sample CSV template for your import.</a>
 
 The headers of the CSV file must have the following columns declared:
   - item_id
@@ -1313,7 +1321,7 @@ The CSV file generated will hold the following columns:
   ## Import Clients Events
 </a>
 
-You can import a CSV file holding data for clients you wish to upload to the API. The benefit of this feature, is that you don't have submit one request for each event you want to represent in the API, but a bunch of them at the same time using this import.
+You can import a <a href="https://github.com/arianlopezc/marcador.io/blob/main/import_clients.csv">CSV file</a> holding data for clients you wish to upload to the API. The benefit of this feature, is that you don't have submit one request for each event you want to represent in the API, but a bunch of them at the same time using this import.
 
 In order to upload an import of events, you go through 4 steps:
   - Initialize the import.
@@ -1322,6 +1330,8 @@ In order to upload an import of events, you go through 4 steps:
   - Download the results file, if one was generated.
 
 Each file to be uploaded, cannot be bigger than 100 Megabytes and it must comply with a very specific format.
+
+<a href="https://github.com/arianlopezc/marcador.io/blob/main/import_clients.csv">Download a sample CSV template for your import.</a>
 
 The headers of the CSV file must have the following columns declared:
   - reference_id
