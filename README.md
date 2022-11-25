@@ -60,6 +60,8 @@ If you decide to submit a CSV file holding events to be processed, keep in mind,
 
 [Export Clients](#export-clients)
 
+[Import Clients Events](#import-clients-events)
+
 <br/>
 <hr/>
 <br/>
@@ -627,7 +629,7 @@ Body
 file = <path/to/CSV/file>
 ```
 
-`id` - a  unique identifier that was provided in the response of the export initialization endpoint. You will use it for everything related to the export, from checking the status, to downloading the results.
+`id` - a  unique identifier that was provided in the response of the export initialization endpoint. You will use it for everything related to the import, from checking the status, to downloading the results.
 
 `Upload Import File - Response`
 
@@ -1305,6 +1307,187 @@ The CSV file generated will hold the following columns:
 `last_updated_on` - date time when the item was last modified, expressed in ISO 8601 format.
 
 <br/>
+
+<a name="import-clients-events">
+
+  ## Import Clients Events
+</a>
+
+You can import a CSV file holding data for clients you wish to upload to the API. The benefit of this feature, is that you don't have submit one request for each event you want to represent in the API, but a bunch of them at the same time using this import.
+
+In order to upload an import of events, you go through 4 steps:
+  - Initialize the import.
+  - Upload the CSV file containing the events.
+  - Check the status of the import process.
+  - Download the results file, if one was generated.
+
+Each file to be uploaded, cannot be bigger than 100 Megabytes and it must comply with a very specific format.
+
+The headers of the CSV file must have the following columns declared:
+  - reference_id
+  - client_id
+  - client_email
+  - client_phone_number
+  - last4
+  - issuer
+  - expiration_date
+  - operation
+  - total
+  - percentage
+  - comment
+
+Each header must be present or the validation process will fail. Each value must be properly placed under the corresponding column, so the API can detect them properly.
+
+`reference_id` - this can be used to associate the event you are submitting to the API with anything you wish. The value doesn't need to be a unique key and can be used with other events to link them together.
+
+`client_id` - unique key that is associated with the data.
+- value's length cannot be linger than 70 characters.
+- value cannot have any of the following characters [`!$%&\*()/\\\=[]{};'"|,.<>?]
+
+`client_email` - represents the email associated to the client you which to query for.
+
+`client_phone_number` - phone number you might have associated with the client data.
+
+`last4` - last four digits of a credit card that might be associated with the client's data.
+
+`issuer` - issuer organization that emited the credit card that might be associated with the client's data.
+- value's length cannot be linger than 70 characters.
+- value cannot have any of the following characters [`!$%&\*()/\\\=[]{};'"|,.<>?]
+
+`expirationDate` - expiration date of the credit card that might be associated with the client's data.
+- must match one of the following patterns: MM/YY, MM/YYYY, MMYY, or MMYYYY
+
+- value's length cannot be linger than 70 characters.
+- value cannot have any of the following characters [`!$%&\*()/\\\=[]{};'"|,.<>?]
+
+`operation` - which action you wish to perform over the item's total
+
+- set - it sets the specified value as the item's total.
+- add - it adds the specified amount to the item.
+- subtract - it reduces the specified amount from the item.
+- add_percentage - it increases the item's total by the specified percentage.
+- subtract_percentage - it reduces the item's total by the specified percentage.
+
+`total` - the numeric value to be used for the operation.
+
+- must be a number between 0 and 999999999999, with up to 5 decimal places.
+
+`percentage` - the percentage value to be used for the operation.
+
+- must be a number between 0 and 999999999999, with up to 5 decimal places.
+
+- value's length cannot be linger than 70 characters.
+- value cannot have any of the following characters [`!$%&\*()/\\\=[]{};'"|,.<>?]
+
+`comment` - any comment you deem relevant.
+
+- value's length cannot be linger than 70 characters.
+- value cannot have any of the following characters [`!$%&\*()/\\\=[]{};'"|,.<>?]
+
+<br/>
+
+`Initialize Import - Request`
+
+```
+POST /v1/merchant/import/clients/events/init
+```
+This will trigger the import process which are performed one at a time.
+
+`Initialize Import - Response`
+
+```
+Http 200
+
+{
+    "id": "1c568229-cba6-4047-b6d1-76cab42f3aeb",
+    "expiresAt": "2022-11-21T00:29:59.665Z"
+}
+```
+
+`id` - a  unique identifier that is given to the import process. You will use it for everything related to this import, from checking the status, to downloading the results.
+
+`expiresAt` - an expiration time expressed in ISO 8601 format, at which the process will be considered as expired because the import file was not properly uploaded to the API.
+
+If there is an import that has been triggered already, you will received an `Http 429` as a response.
+
+The import will be considered as expired after that and you will be able to start a new one if you want so.
+
+<br/>
+
+`Upload Import File - Request`
+
+```
+POST /v1/merchant/import/clients/events/upload-file?id=1c568229-cba6-4047-b6d1-76cab42f3aeb
+
+Content-Type = multipart/form-data
+
+Body
+file = <path/to/CSV/file>
+```
+
+`id` - a  unique identifier that was provided in the response of the export initialization endpoint. You will use it for everything related to the import, from checking the status, to downloading the results.
+
+`Upload Import File - Response`
+
+```
+Http 204
+```
+
+<br/>
+
+`Check Import Status - Request`
+
+```
+GET /v1/merchant/import/clients/events/status?id=1c568229-cba6-4047-b6d1-76cab42f3aeb
+```
+
+`id` - a  unique identifier that was provided in the response of the import initialization endpoint. You will use it for everything related to the import, from checking the status, to downloading the results.
+
+`Check Import Status - Response`
+
+```
+Http 200
+
+{
+    "id": "1c568229-cba6-4047-b6d1-76cab42f3aeb",
+    "status": "COMPLETED"
+}
+```
+`id` - the id sent as part of the request.
+
+`status` - the recorded status for the ongoing import. The possible values are:
+- COMPLETED - the import process finished with no issues at all and all the events were applied to the items.
+- COMPLETED_WITH_ERRORS - the import process finished but the API encountered some issues with some events when processing them.
+- WAITING_FOR_FILE - the import was initialized but the CSV file has not been uploaded yet.
+- PENDING - the import file was uploaded with no issues and is waiting for a worker to pick it up and process it.
+- IN_PROGRESS - the uploaded CSV file is being processed.
+- EXPIRED - the CSV file was not uploaded and the request to process it reached the expiration time.
+- FAILED - the import failed completely and could not be finished.
+
+<br/>
+
+`Import File Check Results File - Request`
+
+If the status on the import process was COMPLETED_WITH_ERRORS then you can download a CSV file that specifies the row number of the import file you uploaded, and has the specified error on the events that failed.
+
+```
+GET /v1/merchant/import/clients/events/results?id=64283212-c791-43da-a9ed-8ea26fd87510
+```
+
+`id` - the id sent as part of the request.
+
+`Import File Check Results File - Response`
+
+```
+Http 200
+
+row_number,errors
+1,total must not be less than 0 - total must not be greater than 999999999999 - total must be a number conforming to the specified constraints
+```
+
+`row_number` - holds the row that failed to be processed.
+
+`errors` - the errors that were identified for the event specified on that row.
 
 <br/>
 <br/>
