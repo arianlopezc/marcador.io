@@ -556,7 +556,7 @@ In order to upload an import of events, you go through 4 steps:
   - Check the status of the import process.
   - Download the results file, if one was generated.
 
-Each file to be uploaded, cannot be bigger than 100 Megabytes and it must comply with a very specific format.
+Each file to be uploaded, cannot be bigger than 20 Megabytes and it must comply with a very specific format.
 
 <a target="_blank" href="https://github.com/arianlopezc/marcador.io/blob/main/import_items.csv">Download a sample CSV template for your import.</a>
 
@@ -1336,7 +1336,7 @@ In order to upload an import of events, you go through 4 steps:
   - Check the status of the import process.
   - Download the results file, if one was generated.
 
-Each file to be uploaded, cannot be bigger than 100 Megabytes and it must comply with a very specific format.
+Each file to be uploaded, cannot be bigger than 20 Megabytes and it must comply with a very specific format.
 
 <a target="_blank" href="https://github.com/arianlopezc/marcador.io/blob/main/import_clients.csv" download>Download a sample CSV template for your import.</a>
 
