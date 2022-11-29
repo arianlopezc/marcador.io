@@ -37,7 +37,7 @@ One very important note!
 If you decide to submit a CSV file holding events to be processed, keep in mind, while the file is still being processed, any event submitted through the events endpoint will be processed at the same time as the file's events. If you expect the events to be processed in some specific order, please keep that in mind. The good news is, that no matter how many operations you send, the final value will be the expected one due to the very nature of the operations we run. Of course, as long as your requests do not fail due to some validation issue or unexpected error in the API.
 <br/>
 <br/>
-All the events that get submitted through the CSV file and using the endpoints, will be accumulated and processed as fast as possible. Make sure to track how many events are left for processing.
+All the events that get submitted through the CSV file and using the endpoints, will be accumulated and processed as fast as possible. Make sure to check the status of the ongoing import.
 <br/>
 <br/>
 
@@ -547,8 +547,7 @@ The CSV file generated will hold the following columns:
 </a>
 
 You can import a <a target="_blank" href="https://github.com/arianlopezc/marcador.io/blob/main/import_items.csv" download>CSV file</a> holding data for items you wish to upload to the API. The benefit of this feature, is that you don't have submit one request for each event you want to represent in the API, but a bunch of them at the same time using this import.
-
-Remember something very important, the API will do its best to process the events as fast as possible, but they can get accumulated and might take some time to process all of them, it all depends on how many do you submit. For example, if you import a file with a 100 thousand events, this could take a few minutes to process. 
+Remember something very important, the API will do its best to process the events as fast as possible, but they can get accumulated and might take some time to process all of them, it all depends on how many do you submit. For example, if you import a file with a 1 million events, this could take a few minutes to process.
 
 In order to upload an import of events, you go through 4 steps:
   - Initialize the import.
@@ -1328,7 +1327,7 @@ The CSV file generated will hold the following columns:
 
 You can import a <a target="_blank" href="https://github.com/arianlopezc/marcador.io/blob/main/import_clients.csv">CSV file</a> holding data for clients you wish to upload to the API. The benefit of this feature, is that you don't have submit one request for each event you want to represent in the API, but a bunch of them at the same time using this import.
 
-Remember something very important, the API will do its best to process the events as fast as possible, but they can get accumulated and might take some time to process all of them, it all depends on how many do you submit. For example, if you import a file with a 100 thousand events, this could take a few minutes to process.
+Remember something very important, the API will do its best to process the events as fast as possible, but they can get accumulated and might take some time to process all of them, it all depends on how many do you submit. For example, if you import a file with a 1 million events, this could take a few minutes to process.
 
 In order to upload an import of events, you go through 4 steps:
   - Initialize the import.
