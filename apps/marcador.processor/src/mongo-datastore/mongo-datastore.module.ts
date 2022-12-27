@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Item, ItemSchema } from './schemas/item.schema';
-import { ItemsRepositoryService } from './items-repository/items-repository.service';
+import { ItemsRepository } from './items-repository/items-repository.service';
 
 const modelSchemas = MongooseModule.forFeature([
   { name: Item.name, schema: ItemSchema },
@@ -24,7 +24,7 @@ const modelSchemas = MongooseModule.forFeature([
     }),
     modelSchemas,
   ],
-  providers: [ItemsRepositoryService],
-  exports: [ItemsRepositoryService],
+  providers: [ItemsRepository],
+  exports: [ItemsRepository],
 })
 export class MongoDatastoreModule {}

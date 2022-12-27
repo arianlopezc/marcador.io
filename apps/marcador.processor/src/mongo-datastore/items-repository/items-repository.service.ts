@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { Item } from '../schemas/item.schema';
 
 @Injectable()
-export class ItemsRepositoryService {
+export class ItemsRepository {
   constructor(
     @InjectModel(Item.name)
     private readonly clientModel: Model<Item>,

@@ -1,9 +1,7 @@
 import { Module } from '@nestjs/common';
-import { MarcadorProcessorService } from './marcador.processor.service';
-import { MongoDatastoreModule } from './mongo-datastore/mongo-datastore.module';
+import { QueueModule } from './queue/queue.module';
 
 @Module({
-  imports: [MongoDatastoreModule],
-  providers: [MarcadorProcessorService],
+  imports: [QueueModule],
 })
 export class MarcadorProcessorModule {}
