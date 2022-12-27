@@ -18,13 +18,13 @@
         "tsConfigPath": "apps/marcador.io/tsconfig.app.json"
       }
     },
-    "marcador-processor": {
+    "marcador.processor": {
       "type": "application",
-      "root": "apps/marcador-processor",
+      "root": "apps/marcador.processor",
       "entryFile": "main",
-      "sourceRoot": "apps/marcador-processor/src",
+      "sourceRoot": "apps/marcador.processor/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/marcador-processor/tsconfig.app.json"
+        "tsConfigPath": "apps/marcador.processor/tsconfig.app.json"
       }
     }
   }

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { MarcadorProcessorModule } from './../src/marcador-processor.module';
+import { MarcadorProcessorModule } from '../src/marcador.processor.module';
 
 describe('MarcadorProcessorController (e2e)', () => {
   let app: INestApplication;

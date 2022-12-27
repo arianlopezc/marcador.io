@@ -1,10 +1,8 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AsyncItemsController } from './controllers/async-items/async-items.controller';
+import { SyncItemsController } from './controllers/sync-items/sync-items.controller';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AsyncItemsController, SyncItemsController],
 })
 export class AppModule {}
