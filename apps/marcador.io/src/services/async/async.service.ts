@@ -1,7 +1,6 @@
 import { InjectQueue } from '@nestjs/bull';
 import { Injectable } from '@nestjs/common';
 import { Queue } from 'bull';
-import { DateTime } from 'luxon';
 import { ItemToStore } from 'shared-models/item-to-store.model';
 import { JobData } from 'shared-models/job-data.model';
 import { Queues } from 'shared-models/queues.enum';
@@ -51,17 +50,11 @@ export class AsyncService {
     if (typeof item !== 'undefined' && item !== null) {
       return item;
     } else {
-      console.log(Utils.generateWhereClause(arg));
       const doc = await this.itemsRepository.findOne(
         Utils.generateWhereClause(arg).where,
       );
-      console.log('doc', doc);
       if (doc !== undefined && doc !== null) {
-        item = new ItemToStore(
-          doc.itemId,
-          doc.total,
-          DateTime.fromJSDate(doc.appliedOn),
-        );
+        item = new ItemToStore(doc.itemId, doc.total, doc.appliedOn);
         await this.itemsCacheRepository.set(doc.itemId, item);
       }
     }

@@ -25,7 +25,7 @@ export class AsyncItemsController {
   @Get()
   async getItem(@Query('id') id: string, @Res() res: Response) {
     const item = await this.asyncService.getItem(id);
-    if (typeof item === 'undefined') {
+    if (typeof item === 'undefined' || item === null) {
       res.sendStatus(HttpStatus.NO_CONTENT);
     } else {
       res.status(HttpStatus.OK).json(item);

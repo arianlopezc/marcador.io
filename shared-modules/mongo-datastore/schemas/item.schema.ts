@@ -7,7 +7,7 @@ const schemaOptions: SchemaOptions = {
   autoIndex: true,
   collection: 'items',
   timestamps: {
-    currentTime: () => DateTime.now().valueOf(),
+    currentTime: () => DateTime.now().toMillis(),
   },
 };
 
@@ -26,11 +26,11 @@ export class Item extends Document {
   total: number;
 
   @Prop({
-    type: SchemaTypes.Date,
+    type: SchemaTypes.Number,
     required: true,
-    default: DateTime.now().toUTC().toISODate(),
+    default: DateTime.now().toMillis(),
   })
-  appliedOn: Date;
+  appliedOn: number;
 }
 
 export const ItemSchema = SchemaFactory.createForClass(Item);

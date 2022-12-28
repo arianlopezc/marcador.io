@@ -48,6 +48,6 @@ export class Utils {
     } else if (itemDto.operation === Operation.Set) {
       total = itemDto.total;
     }
-    return new ItemToStore(itemDto.id, total, DateTime.now().toUTC());
+    return new ItemToStore(itemDto.id, total, DateTime.now().toMillis());
   }
 }

@@ -1,4 +1,3 @@
-import { DateTime } from 'luxon';
 import { ItemToStore } from 'shared-models/item-to-store.model';
 import { JobData } from 'shared-models/job-data.model';
 import { Item } from 'shared-modules/mongo-datastore/schemas/item.schema';
@@ -37,11 +36,7 @@ export class QueueUtils {
 
   public static generateItemToStoreItemDocument(doc?: Item): ItemToStore {
     return typeof doc !== undefined && doc !== null
-      ? new ItemToStore(
-          doc.itemId,
-          doc.total,
-          DateTime.fromJSDate(doc.appliedOn),
-        )
+      ? new ItemToStore(doc.itemId, doc.total, doc.appliedOn)
       : undefined;
   }
 }
