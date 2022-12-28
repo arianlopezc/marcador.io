@@ -23,4 +23,16 @@ export class ItemsRepository {
     })) as Item;
     return doc;
   }
+
+  async findOne(where: any): Promise<Item> {
+    const doc = (await this.clientModel.findOne<Item>(where, undefined, {
+      maxTimeMS: 5000,
+      runValidators: true,
+      new: false,
+      upsert: false,
+      setDefaultsOnInsert: false,
+      useFindAndModify: false,
+    })) as Item;
+    return doc;
+  }
 }

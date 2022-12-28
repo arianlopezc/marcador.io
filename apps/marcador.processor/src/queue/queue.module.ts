@@ -1,11 +1,13 @@
 import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
 import { Queues } from '../../../../shared-models/queues.enum';
-import { MongoDatastoreModule } from '../mongo-datastore/mongo-datastore.module';
+import { CacheDatastoreModule } from '../../../../shared-modules/cache-repositories/cache-datastore.module';
+import { MongoDatastoreModule } from '../../../../shared-modules/mongo-datastore/mongo-datastore.module';
 import { ArithmeticProcessorService } from './processors/arithmetic-processor/arithmetic-processor.service';
 
 @Module({
   imports: [
+    CacheDatastoreModule,
     MongoDatastoreModule,
     BullModule.forRoot({
       redis: {

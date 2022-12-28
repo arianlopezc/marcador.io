@@ -1,6 +1,16 @@
-import { Body, Controller, HttpCode, HttpStatus, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Put,
+  Query,
+  Res,
+} from '@nestjs/common';
 import { ItemDto } from '../../models/item.dto';
 import { AsyncService } from '../../services/async/async.service';
+import { Response } from 'express';
 
 @Controller('item')
 export class AsyncItemsController {
@@ -10,5 +20,15 @@ export class AsyncItemsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async putItem(@Body() body: ItemDto) {
     await this.asyncService.putItem(body);
+  }
+
+  @Get()
+  async getItem(@Query('id') id: string, @Res() res: Response) {
+    const item = await this.asyncService.getItem(id);
+    if (typeof item === 'undefined') {
+      res.sendStatus(HttpStatus.NO_CONTENT);
+    } else {
+      res.status(HttpStatus.OK).json(item);
+    }
   }
 }

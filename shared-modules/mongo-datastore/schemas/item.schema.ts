@@ -24,6 +24,13 @@ export class Item extends Document {
     required: true,
   })
   total: number;
+
+  @Prop({
+    type: SchemaTypes.Date,
+    required: true,
+    default: DateTime.now().toUTC().toISODate(),
+  })
+  appliedOn: Date;
 }
 
 export const ItemSchema = SchemaFactory.createForClass(Item);
