@@ -1,18 +1,22 @@
-import { Process, Processor } from '@nestjs/bull';
+import { InjectQueue, OnQueueFailed, Process, Processor } from '@nestjs/bull';
 import { ItemsRepository } from 'shared-modules/mongo-datastore/items-repository/items-repository.service';
-import { Job } from 'bull';
+import { Job, Queue } from 'bull';
 import { JobData } from 'shared-models/job-data.model';
 import { Queues } from 'shared-models/queues.enum';
 import { QueueUtils } from '../../queue.utils';
 import { ItemsCacheRepository } from 'shared-modules/cache-repositories/items-cache-repository/items-cache-repository.service';
 import { ItemToStore } from 'shared-models/item-to-store.model';
 import { QueryClause } from 'shared-modules/mongo-datastore/schemas/query-clause.model';
+import { Logger } from '@nestjs/common';
+import { JobPriority } from 'shared-models/job-priority.enum';
 
 @Processor(Queues.ARITHMETIC_OPERATIONS)
 export class ArithmeticProcessorService {
   constructor(
     private readonly itemsRepository: ItemsRepository,
     private readonly itemsCacheRepository: ItemsCacheRepository,
+    @InjectQueue(Queues.ARITHMETIC_OPERATIONS)
+    private readonly arithmeticOperationsQueue: Queue,
   ) {}
 
   @Process(Queues.ARITHMETIC_OPERATIONS)
@@ -69,5 +73,18 @@ export class ArithmeticProcessorService {
     ) {
       await this.itemsCacheRepository.set(mostUpdated.itemId, mostUpdated);
     }
+  }
+
+  @OnQueueFailed()
+  async onQueueFailed(job: Job<JobData>, error: Error) {
+    Logger.error(error);
+    await this.arithmeticOperationsQueue.add(
+      Queues.ARITHMETIC_OPERATIONS,
+      job.data,
+      {
+        jobId: job.data.itemDto.id,
+        priority: JobPriority.HIGH_PRIORITY,
+      },
+    );
   }
 }

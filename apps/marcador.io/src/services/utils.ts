@@ -21,9 +21,9 @@ export class Utils {
       } else if (arg.operation === Operation.Subtract) {
         update['$inc'] = { total: arg.total * -1 };
       } else if (arg.operation === Operation.Set) {
-        update['$set']['total'] = arg.total;
+        update['$set'] = { total: arg.total };
       } else {
-        update['$set']['total'] = 0;
+        update['$set'] = { total: 0 };
       }
       return {
         where: {

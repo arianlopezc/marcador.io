@@ -1,8 +1,9 @@
 import { InjectQueue } from '@nestjs/bull';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Queue } from 'bull';
 import { ItemToStore } from 'shared-models/item-to-store.model';
 import { JobData } from 'shared-models/job-data.model';
+import { JobPriority } from 'shared-models/job-priority.enum';
 import { Queues } from 'shared-models/queues.enum';
 import { ItemsCacheRepository } from 'shared-modules/cache-repositories/items-cache-repository/items-cache-repository.service';
 import { ItemsRepository } from 'shared-modules/mongo-datastore/items-repository/items-repository.service';
@@ -11,9 +12,6 @@ import { Utils } from '../utils';
 
 @Injectable()
 export class AsyncService {
-  private readonly REGULAR_PRIORITY = 2;
-  private readonly HIGH_PRIORITY = 1;
-
   constructor(
     @InjectQueue(Queues.ARITHMETIC_OPERATIONS)
     private readonly arithmeticOperationsQueue: Queue,
@@ -22,22 +20,32 @@ export class AsyncService {
   ) {}
 
   async putItem(body: ItemDto): Promise<void> {
-    const item = await this.getItemFromRepositories(body);
-    const newItem = Utils.generateNewItemToStore(body, item);
-    await this.arithmeticOperationsQueue.add(
-      Queues.ARITHMETIC_OPERATIONS,
-      new JobData(body, newItem),
-      {
-        jobId: body.id,
-        priority: this.REGULAR_PRIORITY,
-      },
-    );
-    await this.itemsCacheRepository.set(body.id, newItem);
-    return;
+    try {
+      const item = await this.getItemFromRepositories(body);
+      const newItem = Utils.generateNewItemToStore(body, item);
+      await this.arithmeticOperationsQueue.add(
+        Queues.ARITHMETIC_OPERATIONS,
+        new JobData(body, newItem),
+        {
+          jobId: body.id,
+          priority: JobPriority.REGULAR_PRIORITY,
+        },
+      );
+      await this.itemsCacheRepository.set(body.id, newItem);
+      return;
+    } catch (error) {
+      Logger.error(error);
+      throw error;
+    }
   }
 
   async getItem(id: string): Promise<ItemToStore> {
-    return await this.getItemFromRepositories(id);
+    try {
+      return await this.getItemFromRepositories(id);
+    } catch (error) {
+      Logger.error(error);
+      throw error;
+    }
   }
 
   private async getItemFromRepositories(itemDto: ItemDto): Promise<ItemToStore>;

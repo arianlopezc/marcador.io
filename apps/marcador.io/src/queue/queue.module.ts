@@ -21,7 +21,7 @@ const queues = [
         stalledInterval: 1000,
       },
       defaultJobOptions: {
-        attempts: 4,
+        attempts: 1,
         removeOnComplete: true,
         removeOnFail: true,
         timeout: 5000,
