@@ -7,11 +7,14 @@ import {
   Put,
   Query,
   Res,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ItemDto } from '../../models/item.dto';
 import { AsyncService } from '../../services/async/async.service';
 import { Response } from 'express';
+import { RequestMetadataInterceptor } from '../../interceptors/request-metadata.interceptor';
 
+@UseInterceptors(new RequestMetadataInterceptor())
 @Controller('item')
 export class AsyncItemsController {
   constructor(private readonly asyncService: AsyncService) {}

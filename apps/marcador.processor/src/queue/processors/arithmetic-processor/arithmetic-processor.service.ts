@@ -9,6 +9,9 @@ import { ItemToStore } from 'shared-models/item-to-store.model';
 import { QueryClause } from 'shared-modules/mongo-datastore/schemas/query-clause.model';
 import { Logger } from '@nestjs/common';
 import { JobPriority } from 'shared-models/job-priority.enum';
+import { DateTime } from 'luxon';
+import { MetricsService } from 'apps/marcador.processor/src/monitor/metrics/metrics.service';
+import { RateMetricName } from 'apps/marcador.processor/src/monitor/monitor.metrics';
 
 @Processor(Queues.ARITHMETIC_OPERATIONS)
 export class ArithmeticProcessorService {
@@ -17,11 +20,20 @@ export class ArithmeticProcessorService {
     private readonly itemsCacheRepository: ItemsCacheRepository,
     @InjectQueue(Queues.ARITHMETIC_OPERATIONS)
     private readonly arithmeticOperationsQueue: Queue,
+    private readonly metricsService: MetricsService,
   ) {}
 
   @Process(Queues.ARITHMETIC_OPERATIONS)
   async processItemArchive(job: Job<JobData>) {
     const storedItemInstances = [job.data.itemToStore];
+    const waitedToStart = DateTime.now().diff(
+      DateTime.fromMillis(job.timestamp),
+      'seconds',
+    ).seconds;
+    this.metricsService.postRate({
+      name: RateMetricName.ProcessOperationRate,
+      value: waitedToStart,
+    });
     const storedCachedItem = await this.itemsCacheRepository.get(
       job.data.itemDto.id,
     );

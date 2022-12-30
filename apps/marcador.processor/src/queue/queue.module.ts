@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { Queues } from '../../../../shared-models/queues.enum';
 import { CacheDatastoreModule } from '../../../../shared-modules/cache-repositories/cache-datastore.module';
 import { MongoDatastoreModule } from '../../../../shared-modules/mongo-datastore/mongo-datastore.module';
+import { MonitoringModule } from '../monitor/monitor.module';
 import { ArithmeticProcessorService } from './processors/arithmetic-processor/arithmetic-processor.service';
 
 @Module({
@@ -29,6 +30,7 @@ import { ArithmeticProcessorService } from './processors/arithmetic-processor/ar
       name: Queues.ARITHMETIC_OPERATIONS,
       prefix: Queues.ARITHMETIC_OPERATIONS,
     }),
+    MonitoringModule,
   ],
   providers: [ArithmeticProcessorService],
 })
