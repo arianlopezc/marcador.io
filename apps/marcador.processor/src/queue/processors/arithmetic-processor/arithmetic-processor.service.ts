@@ -10,30 +10,29 @@ import { QueryClause } from 'shared-modules/mongo-datastore/schemas/query-clause
 import { Logger } from '@nestjs/common';
 import { JobPriority } from 'shared-models/job-priority.enum';
 import { DateTime } from 'luxon';
-import { MetricsService } from 'apps/marcador.processor/src/monitor/metrics/metrics.service';
-import { RateMetricName } from 'apps/marcador.processor/src/monitor/monitor.metrics';
+
+interface WaitTime {
+  totalCalls: number;
+  waitTimes: number[];
+  maxWaitTime: number;
+  minWaitTime: number;
+}
 
 @Processor(Queues.ARITHMETIC_OPERATIONS)
 export class ArithmeticProcessorService {
+  private readonly timeRange = new Map<string, WaitTime>();
+
   constructor(
     private readonly itemsRepository: ItemsRepository,
     private readonly itemsCacheRepository: ItemsCacheRepository,
     @InjectQueue(Queues.ARITHMETIC_OPERATIONS)
     private readonly arithmeticOperationsQueue: Queue,
-    private readonly metricsService: MetricsService,
   ) {}
 
   @Process(Queues.ARITHMETIC_OPERATIONS)
   async processItemArchive(job: Job<JobData>) {
     const storedItemInstances = [job.data.itemToStore];
-    const waitedToStart = DateTime.now().diff(
-      DateTime.fromMillis(job.timestamp),
-      'seconds',
-    ).seconds;
-    this.metricsService.postRate({
-      name: RateMetricName.ProcessOperationRate,
-      value: waitedToStart,
-    });
+    this.handleWaitTime(job);
     const storedCachedItem = await this.itemsCacheRepository.get(
       job.data.itemDto.id,
     );
@@ -55,6 +54,43 @@ export class ArithmeticProcessorService {
       this.storeInRedisIfNeeded(mostUpdated, storedCachedItem),
     ]);
     return;
+  }
+
+  private handleWaitTime(job: Job<JobData>) {
+    const waitedToStart = DateTime.now().diff(
+      DateTime.fromMillis(job.timestamp),
+      'milliseconds',
+    ).milliseconds;
+    const now = DateTime.now();
+    const timeKey = `${now.hour}:${now.minute}:${now.second}`;
+    const value: WaitTime = this.timeRange.get(timeKey);
+    if (typeof value === 'undefined') {
+      for (const [key, range] of this.timeRange) {
+        if (key !== timeKey) {
+          Logger.log(
+            `Min wait time: ${range.minWaitTime} ms, Max wait time: ${
+              range.maxWaitTime
+            } ms, Avg wait time: ${Math.round(
+              range.waitTimes.reduce((prev, curr) => prev + curr) /
+                range.totalCalls,
+            )} ms, Total calls: ${range.totalCalls}`,
+          );
+        }
+      }
+      this.timeRange.clear();
+      this.timeRange.set(timeKey, {
+        waitTimes: [waitedToStart],
+        minWaitTime: waitedToStart,
+        maxWaitTime: waitedToStart,
+        totalCalls: 1,
+      });
+    } else {
+      value.totalCalls++;
+      value.waitTimes.push(waitedToStart);
+      value.maxWaitTime = Math.max(value.maxWaitTime, waitedToStart);
+      value.minWaitTime = Math.min(value.minWaitTime, waitedToStart);
+      this.timeRange.set(timeKey, value);
+    }
   }
 
   private async storeInMongoIfNeeded(

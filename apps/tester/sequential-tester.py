@@ -4,6 +4,7 @@ import uuid
 import random
 import datetime
 
+
 class Event:
     def __init__(self, item_id, operation, total):
         self.id = item_id
@@ -31,7 +32,7 @@ operations = ["add", "subtract", "set"]
 events_to_submit = []
 expected_results = {}
 
-print("Generating %d events for %d items".format(total_requests, total_items))
+print(f'Generating {str(total_requests)} events for {str(total_items)} items')
 print()
 
 for i in range(total_requests):
@@ -77,6 +78,7 @@ for id in item_ids:
         response = requests.get("http://localhost:3000/v1/item?id=%s" % id)
         if response.status_code != 200:
             print("Error getting item: %s", response.text)
+            total_mismatch += 1
         else:
             item = response.json()
             if item["total"] != expected_results[id]:
@@ -88,11 +90,13 @@ end_check_time = datetime.datetime.now()
 
 print()
 print("Results:")
-print("Total items: %d" % total_items)
-print("Total successful requests: %d" % total_successful_requests)
-print("Total mismatches: %d" % total_mismatch)
-print("Percentage of mismatches: %f" % (total_mismatch / total_items * 100))
-print("Total milliseconds it took to submit: %d" % ((end_submit_time - start_submit_time).total_seconds() * 1000))
-print("Total milliseconds it took to check: %d" % ((end_check_time - start_check_time).total_seconds() * 1000))
+print(f'Total items: {total_items}')
+print(f'Total successful requests: {total_successful_requests}')
+print(f'Total mismatches: {total_mismatch}')
+print(f'Percentage of mismatches: {(total_mismatch / total_items * 100)}')
+print(
+    f'Total milliseconds it took to submit: {((end_submit_time - start_submit_time).total_seconds() * 1000)}')
+print(
+    f'Total milliseconds it took to check: {((end_check_time - start_check_time).total_seconds() * 1000)}')
 print()
 print("Test is Finished")

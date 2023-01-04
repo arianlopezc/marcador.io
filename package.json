@@ -23,7 +23,6 @@
     "test:e2e": "jest --config ./apps/marcador.io/test/jest-e2e.json"
   },
   "dependencies": {
-    "@datadog/datadog-api-client": "^1.6.0",
     "@nestjs/bull": "^0.6.2",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.2.0",
