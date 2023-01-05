@@ -40,7 +40,7 @@ export class TimeRangeInterceptor implements NestInterceptor {
               range.maxLatencyTime
             } ms, Avg latency time: ${Math.round(
               range.latencyTimes.reduce((prev, curr) => prev + curr) /
-                range.totalCalls,
+                range.latencyTimes.length,
             )} ms, Total calls: ${range.totalCalls}`,
           );
         }

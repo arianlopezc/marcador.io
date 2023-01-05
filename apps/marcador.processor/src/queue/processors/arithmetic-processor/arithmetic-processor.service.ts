@@ -72,7 +72,7 @@ export class ArithmeticProcessorService {
               range.maxWaitTime
             } ms, Avg wait time: ${Math.round(
               range.waitTimes.reduce((prev, curr) => prev + curr) /
-                range.totalCalls,
+                range.waitTimes.length,
             )} ms, Total calls: ${range.totalCalls}`,
           );
         }

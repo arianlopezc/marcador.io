@@ -21,14 +21,17 @@ class TestThread(threading.Thread):
         self.total_items_to_test = total_items_to_test
         self.total_requests_to_test = total_requests_to_test
         self.total_mismatchs = 0
+        self.total_errors = 0
 
     def run(self):
         print(f'Starting Thread: {str(self.threadID)}')
         print(f'Thread {str(self.threadID)} Calling perform_test')
-        [total_mismatchs, total_successful_requests] = perform_test(
+        [total_mismatchs, total_successful_requests, total_errors] = perform_test(
             self.total_items_to_test, self.total_requests_to_test)
         self.total_mismatchs = total_mismatchs
         self.total_successful_requests = total_successful_requests
+        self.total_errors = total_errors
+
 
 threads = []
 
@@ -57,24 +60,28 @@ print(f'Generating {str(total_requests)} events for {str(total_items)} items')
 
 total_mismatch_reported = 0
 total_successful_requests_reported = 0
+total_errors_reported = 0
 
 
 def check_events(ids_to_check, expected_results):
     total_mismatch = 0
+    total_errors = 0
     for id in ids_to_check:
         try:
             response = requests.get("http://localhost:3000/v1/item?id=%s" % id)
-            if response.status_code != 200:
-                print(f'Error getting item: {response.text}')
+            if response.status_code == 204:
                 total_mismatch += 1
-            else:
+            elif response.status_code == 200:
                 item = response.json()
                 if item["total"] != expected_results[id]:
                     total_mismatch += 1
+            else:
+                total_errors += 1
+                print("Error getting item: %s", response.text)
         except Exception as e:
             print("Error getting item: {id}")
             print(e)
-    return total_mismatch
+    return [total_mismatch, total_errors]
 
 
 def perform_test(total_items_to_test, total_requests_to_test):
@@ -84,12 +91,15 @@ def perform_test(total_items_to_test, total_requests_to_test):
     event_index = 0
     total_successful_requests = 0
     total_mismatchs = 0
+    total_errors = 0
 
     for i in range(total_requests_to_test):
         if TOTAL_EVENTS_IN_CYCLE == event_index:
             event_index = 0
-            total_mismatchs += check_events(
+            [total_mismatch, total_error] = check_events(
                 list(expected_results.keys()), expected_results)
+            total_mismatchs += total_mismatch
+            total_errors += total_error
 
         item_id = random.choice(item_ids)
         operation = random.choice(operations)
@@ -114,9 +124,12 @@ def perform_test(total_items_to_test, total_requests_to_test):
             print("Error submitting event: %s", e)
         event_index += 1
 
-    total_mismatchs += check_events(item_ids, expected_results)
+    [total_mismatch, total_error] = check_events(
+        list(expected_results.keys()), expected_results)
+    total_mismatchs += total_mismatch
+    total_errors += total_error
 
-    return [total_mismatchs, total_successful_requests]
+    return [total_mismatchs, total_successful_requests, total_errors]
 
 
 for thread_number in range(total_threads):
@@ -134,12 +147,14 @@ for t in threads:
 for t in threads:
     total_mismatch_reported += t.total_mismatchs
     total_successful_requests_reported += t.total_successful_requests
+    total_errors_reported += t.total_errors
 
 print()
 print("Results:")
 print(f'Total items: {total_items * total_threads}')
 print(f'Total successful requests: {total_successful_requests_reported}')
 print(f'Total mismatches: {total_mismatch_reported}')
+print(f'Total errors: {total_errors_reported}')
 print(
     f'Percentage of mismatches: {(total_mismatch_reported / total_successful_requests_reported * 100)}')
 print()

@@ -11,7 +11,7 @@ export class ItemsRepository {
   ) {}
 
   async findOneAndUpdate(where: any, update: any): Promise<Item> {
-    const doc = (await this.clientModel.findOneAndUpdate<Item>(where, update, {
+    const doc = await this.clientModel.findOneAndUpdate<Item>(where, update, {
       maxTimeMS: 5000,
       runValidators: true,
       new: true,
@@ -20,19 +20,19 @@ export class ItemsRepository {
       useFindAndModify: false,
       w: 'majority',
       wtimeout: 5000,
-    })) as Item;
-    return doc;
+    });
+    return doc as Item;
   }
 
   async findOne(where: any): Promise<Item> {
-    const doc = (await this.clientModel.findOne<Item>(where, undefined, {
+    const doc = await this.clientModel.findOne<Item>(where, undefined, {
       maxTimeMS: 5000,
       runValidators: true,
       new: false,
       upsert: false,
       setDefaultsOnInsert: false,
       useFindAndModify: false,
-    })) as Item;
-    return doc;
+    });
+    return doc as Item;
   }
 }
