@@ -9,7 +9,7 @@ const modelSchemas = MongooseModule.forFeature([
 
 @Module({
   imports: [
-    MongooseModule.forRoot(`mongodb://localhost:27017/marcadorio`, {
+    MongooseModule.forRoot(`mongodb://mongo:27017/marcadorio`, {
       useUnifiedTopology: true,
       useNewUrlParser: true,
       autoCreate: true,

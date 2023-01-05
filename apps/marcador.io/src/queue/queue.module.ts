@@ -13,7 +13,7 @@ const queues = [
   imports: [
     BullModule.forRoot({
       redis: {
-        host: 'localhost',
+        host: 'redis',
         port: 6379,
       },
       settings: {

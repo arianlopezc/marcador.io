@@ -68,7 +68,7 @@ def check_events(ids_to_check, expected_results):
     total_errors = 0
     for id in ids_to_check:
         try:
-            response = requests.get("http://localhost:3000/v1/item?id=%s" % id)
+            response = requests.get("http://localhost:3100/v1/item?id=%s" % id)
             if response.status_code == 204:
                 total_mismatch += 1
             elif response.status_code == 200:
@@ -107,7 +107,7 @@ def perform_test(total_items_to_test, total_requests_to_test):
         event = Event(item_id, operation, total)
         try:
             response = requests.put(
-                "http://localhost:3000/v1/item", json=event.__dict__)
+                "http://localhost:3100/v1/item", json=event.__dict__)
             if response.status_code != 204:
                 print("Error submitting event: %s", response.text)
             else:

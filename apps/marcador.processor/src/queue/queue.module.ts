@@ -11,7 +11,7 @@ import { ArithmeticProcessorService } from './processors/arithmetic-processor/ar
     MongoDatastoreModule,
     BullModule.forRoot({
       redis: {
-        host: 'localhost',
+        host: 'redis',
         port: 6379,
       },
       settings: {

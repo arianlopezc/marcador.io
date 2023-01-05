@@ -1,13 +1,15 @@
 {
   "name": "marcador.io",
   "version": "1.0.1",
-  "description": "",
+  "description": "An async way to process a large amount of data.",
   "author": "Arian Lopez",
   "private": true,
   "license": "MIT",
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
+    "build:api": "nest build marcador.api",
+    "build:worker": "nest build marcador.processor",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start": "nest start",
     "start:api": "nest start marcador.io",
