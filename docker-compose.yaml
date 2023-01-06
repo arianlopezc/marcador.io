@@ -43,6 +43,7 @@ services:
       - redis
     networks:
       - app-tier
+    image: arianlc/marcador.io:api
   
   worker:
     depends_on:
@@ -56,3 +57,4 @@ services:
       - redis
     networks:
       - app-tier
+    image: arianlc/marcador.io:worker
