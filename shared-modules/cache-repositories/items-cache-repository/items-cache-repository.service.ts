@@ -13,4 +13,8 @@ export class ItemsCacheRepository {
   async set(key: string, value: ItemToStore): Promise<void> {
     await this.cacheManager.set(`item:${key}`, value);
   }
+
+  async del(key: string): Promise<void> {
+    await this.cacheManager.del(`item:${key}`);
+  }
 }

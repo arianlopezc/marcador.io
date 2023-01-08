@@ -48,6 +48,16 @@ export class AsyncService {
     }
   }
 
+  async clearFromCache(id: string): Promise<void> {
+    try {
+      await this.itemsCacheRepository.del(id);
+      return;
+    } catch (error) {
+      Logger.error(error);
+      throw error;
+    }
+  }
+
   private async getItemFromRepositories(itemDto: ItemDto): Promise<ItemToStore>;
   private async getItemFromRepositories(id: string): Promise<ItemToStore>;
   private async getItemFromRepositories(arg: any): Promise<ItemToStore> {

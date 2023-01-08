@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Post,
   Put,
   Query,
   Res,
@@ -33,5 +34,11 @@ export class AsyncItemsController {
     } else {
       res.status(HttpStatus.OK).json(item);
     }
+  }
+
+  @Post('clear')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async clearFromCache(@Query('id') id: string) {
+    await this.asyncService.clearFromCache(id);
   }
 }

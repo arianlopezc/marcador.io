@@ -1,4 +1,6 @@
 from argparse import ArgumentParser
+import queue
+import time
 import requests
 import uuid
 import random
@@ -22,6 +24,7 @@ class TestThread(threading.Thread):
         self.total_requests_to_test = total_requests_to_test
         self.total_mismatchs = 0
         self.total_errors = 0
+        self.performed_operations = queue.Queue()
 
     def run(self):
         print(f'Starting Thread: {str(self.threadID)}')
@@ -51,7 +54,7 @@ total_items = int(args.total_items)
 total_requests = int(args.total_requests)
 total_threads = int(args.total_threads)
 
-print("Starting Sequential Tester")
+print("Starting Tester")
 print()
 
 operations = ["add", "subtract", "set"]
@@ -79,14 +82,26 @@ def check_events(ids_to_check, expected_results):
                 total_errors += 1
                 print("Error getting item: %s", response.text)
         except Exception as e:
-            print("Error getting item: {id}")
+            print(f'Error getting item: {id}')
             print(e)
     return [total_mismatch, total_errors]
 
 
+def clear_items(ids_to_clear):
+    for id in ids_to_clear:
+        try:
+            response = requests.post(
+                "http://localhost:3100/v1/item/clear?id=%s" % id)
+            if response.status_code != 204:
+                print("Error clearing items: %s", response
+                      .text)
+        except Exception as e:
+            print("Error clearing items: %s", e)
+
+
 def perform_test(total_items_to_test, total_requests_to_test):
     item_ids = [str(uuid.uuid4())
-                for client_number in range(int(total_items_to_test))]
+                for itin in range(int(total_items_to_test))]
     expected_results = {}
     event_index = 0
     total_successful_requests = 0
@@ -128,7 +143,6 @@ def perform_test(total_items_to_test, total_requests_to_test):
         list(expected_results.keys()), expected_results)
     total_mismatchs += total_mismatch
     total_errors += total_error
-
     return [total_mismatchs, total_successful_requests, total_errors]
 
 
@@ -155,8 +169,9 @@ print(f'Total items: {total_items * total_threads}')
 print(f'Total successful requests: {total_successful_requests_reported}')
 print(f'Total mismatches: {total_mismatch_reported}')
 print(f'Total errors: {total_errors_reported}')
-print(
-    f'Percentage of mismatches: {(total_mismatch_reported / total_successful_requests_reported * 100)}')
+if total_successful_requests_reported > 0:
+    print(
+        f'Percentage of mismatches: {(total_mismatch_reported / total_successful_requests_reported * 100)}')
 print()
 print("Test is Finished")
 
